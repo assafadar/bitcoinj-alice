@@ -113,6 +113,14 @@ public class KeyChainGroup implements KeyBag {
         this(params, null, ImmutableList.of(DeterministicKeyChain.watch(watchKey, creationTimeSecondsSecs)), null, null, 1, null);
     }
 
+   /**
+     * Creates a keychain group with no basic chain, and an HD chain that is watching the given watching key which
+     * was assumed to be first used at the given UNIX time.
+     */
+    public KeyChainGroup(NetworkParameters params, DeterministicKey watchKey, long creationTimeSecondsSecs, ImmutableList<ChildNumber> rootNodeList) {
+        this(params, null, ImmutableList.of(DeterministicKeyChain.watch(watchKey, creationTimeSecondsSecs, rootNodeList)), null, null, 1, null);
+    }
+
     /**
      * Creates a keychain group with no basic chain, with an HD chain initialized from the given seed and being followed
      * by given list of watch keys. Watch keys have to be account keys.
