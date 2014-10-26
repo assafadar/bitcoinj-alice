@@ -685,7 +685,6 @@ public class DeterministicKeyChain implements EncryptableKeyChain {
      * key rotation it can happen that there are multiple chains found.
      */
     public static List<DeterministicKeyChain> fromProtobuf(List<Protos.Key> keys, @Nullable KeyCrypter crypter) throws UnreadableWalletException {
-        System.out.println("DeterministicKeyChain#fromProtobuf keys = " + keys );
         List<DeterministicKeyChain> chains = newLinkedList();
         DeterministicSeed seed = null;
         DeterministicKeyChain chain = null;
