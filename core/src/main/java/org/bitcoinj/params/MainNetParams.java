@@ -16,6 +16,7 @@
 
 package org.bitcoinj.params;
 
+import org.bitcoinj.core.BitcointVerifyFunction;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.Utils;
@@ -28,6 +29,7 @@ import static com.google.common.base.Preconditions.checkState;
 public class MainNetParams extends NetworkParameters {
     public MainNetParams() {
         super();
+        blockVerifyFunction = new BitcointVerifyFunction();
         interval = INTERVAL;
         targetTimespan = TARGET_TIMESPAN;
         maxTarget = Utils.decodeCompactBits(0x1d00ffffL);

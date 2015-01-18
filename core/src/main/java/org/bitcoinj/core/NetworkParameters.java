@@ -78,6 +78,12 @@ public abstract class NetworkParameters implements Serializable {
     protected int bip32HeaderPub;
     protected int bip32HeaderPriv;
 
+    public VerifyFunction getBlockVerifyFunction() {
+        return blockVerifyFunction;
+    }
+
+    protected VerifyFunction blockVerifyFunction;
+
     /**
      * See getId(). This may be null for old deserialized wallets. In that case we derive it heuristically
      * by looking at the port number.
@@ -120,6 +126,15 @@ public abstract class NetworkParameters implements Serializable {
         }
         genesisBlock.addTransaction(t);
         return genesisBlock;
+    }
+
+    /**
+     * little hack for block creation. Because Block constructor is package-visible
+     * @param n
+     * @return
+     */
+    protected static Block createEmpty(NetworkParameters n) {
+        return new Block(n);
     }
 
     public static final int TARGET_TIMESPAN = 14 * 24 * 60 * 60;  // 2 weeks per difficulty cycle, on average.

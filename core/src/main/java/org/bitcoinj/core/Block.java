@@ -375,7 +375,7 @@ public class Block extends Message {
     }
 
     // default for testing
-    void writeHeader(OutputStream stream) throws IOException {
+    public void writeHeader(OutputStream stream) throws IOException {
         // try for cached write first
         if (headerBytesValid && payload != null && payload.length >= offset + HEADER_SIZE) {
             stream.write(payload, offset, HEADER_SIZE);
@@ -642,26 +642,7 @@ public class Block extends Message {
 
     /** Returns true if the hash of the block is OK (lower than difficulty target). */
     private boolean checkProofOfWork(boolean throwException) throws VerificationException {
-        // This part is key - it is what proves the block was as difficult to make as it claims
-        // to be. Note however that in the context of this function, the block can claim to be
-        // as difficult as it wants to be .... if somebody was able to take control of our network
-        // connection and fork us onto a different chain, they could send us valid blocks with
-        // ridiculously easy difficulty and this function would accept them.
-        //
-        // To prevent this attack from being possible, elsewhere we check that the difficultyTarget
-        // field is of the right value. This requires us to have the preceeding blocks.
-        BigInteger target = getDifficultyTargetAsInteger();
-
-        BigInteger h = getHash().toBigInteger();
-        if (h.compareTo(target) > 0) {
-            // Proof of work check failed!
-            if (throwException)
-                throw new VerificationException("Hash is higher than target: " + getHashAsString() + " vs "
-                        + target.toString(16));
-            else
-                return false;
-        }
-        return true;
+       return params.getBlockVerifyFunction().verify(this, throwException);
     }
 
     private void checkTimestamp() throws VerificationException {

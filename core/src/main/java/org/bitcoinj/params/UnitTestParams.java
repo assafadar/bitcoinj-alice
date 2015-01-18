@@ -16,6 +16,7 @@
 
 package org.bitcoinj.params;
 
+import org.bitcoinj.core.BitcointVerifyFunction;
 import org.bitcoinj.core.Block;
 import org.bitcoinj.core.NetworkParameters;
 
@@ -28,6 +29,7 @@ import java.math.BigInteger;
 public class UnitTestParams extends NetworkParameters {
     public UnitTestParams() {
         super();
+        blockVerifyFunction = new BitcointVerifyFunction();
         id = ID_UNITTESTNET;
         packetMagic = 0x0b110907;
         addressHeader = 111;

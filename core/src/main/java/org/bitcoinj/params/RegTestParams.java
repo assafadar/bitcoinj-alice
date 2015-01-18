@@ -16,6 +16,7 @@
 
 package org.bitcoinj.params;
 
+import org.bitcoinj.core.BitcointVerifyFunction;
 import org.bitcoinj.core.Block;
 
 import java.math.BigInteger;
@@ -30,6 +31,7 @@ public class RegTestParams extends TestNet2Params {
 
     public RegTestParams() {
         super();
+        blockVerifyFunction = new BitcointVerifyFunction();
         interval = 10000;
         maxTarget = MAX_TARGET;
         subsidyDecreaseBlockCount = 150;

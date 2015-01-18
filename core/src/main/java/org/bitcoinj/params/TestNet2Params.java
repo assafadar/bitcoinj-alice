@@ -16,6 +16,7 @@
 
 package org.bitcoinj.params;
 
+import org.bitcoinj.core.BitcointVerifyFunction;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Utils;
 
@@ -28,6 +29,7 @@ import static com.google.common.base.Preconditions.checkState;
 public class TestNet2Params extends NetworkParameters {
     public TestNet2Params() {
         super();
+        blockVerifyFunction = new BitcointVerifyFunction();
         id = ID_TESTNET;
         packetMagic = 0xfabfb5daL;
         port = 18333;

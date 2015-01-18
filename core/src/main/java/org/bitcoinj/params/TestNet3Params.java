@@ -17,6 +17,7 @@
 
 package org.bitcoinj.params;
 
+import org.bitcoinj.core.BitcointVerifyFunction;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Utils;
 
@@ -29,6 +30,7 @@ import static com.google.common.base.Preconditions.checkState;
 public class TestNet3Params extends NetworkParameters {
     public TestNet3Params() {
         super();
+        blockVerifyFunction = new BitcointVerifyFunction();
         id = ID_TESTNET;
         // Genesis hash is 000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943
         packetMagic = 0x0b110907;
