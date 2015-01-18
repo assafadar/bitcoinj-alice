@@ -220,6 +220,47 @@ public class CheckpointManager {
         CheckpointManager manager = new CheckpointManager(params, stream);
         StoredBlock checkpoint = manager.getCheckpointBefore(time);
         store.put(checkpoint);
-        store.setChainHead(checkpoint);
+
+        if(!params.fixTimeWarpBug){
+            store.setChainHead(checkpoint);
+        }else {
+            //bitcoin time wrap bug fix
+            //We need to have 2016th and 2015th blocks in BlockStore
+            if (checkpoint.getHeight() % params.getInterval() == 0) {
+                //2016th block found
+                //need to find 2015th
+                StoredBlock checkpoint2015 = null;
+                for (StoredBlock block : manager.checkpoints.values())
+                    if (block.getHeight() == checkpoint.getHeight() - 1) {
+                        checkpoint2015 = block;
+                        break;
+                    }
+
+                if (checkpoint2015 == null)
+                    throw new RuntimeException("Could not find checkpoint 'mod 2015' block. Something wrong with checkpoint export tool");
+
+                store.put(checkpoint2015);
+                //checkpoint 'mod 2016' as head
+                store.setChainHead(checkpoint);
+
+            } else if (checkpoint.getHeight() % params.getInterval() == 2015) {
+                //2015th block found
+                //need to find 2016th
+                StoredBlock checkpoint2016 = null;
+                for (StoredBlock block : manager.checkpoints.values())
+                    if (block.getHeight() == checkpoint.getHeight() + 1) {
+                        checkpoint2016 = block;
+                        break;
+                    }
+
+                if (checkpoint2016 == null)
+                    throw new RuntimeException("Could not find checkpoint 'mod 2016' block. Something wrong with checkpoint export tool");
+
+                store.put(checkpoint2016);
+                store.setChainHead(checkpoint2016);
+            } else
+                throw new RuntimeException("must never happen! Something wrong with checkpoint export tool");
+        }
+
     }
 }
