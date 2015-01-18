@@ -3442,7 +3442,7 @@ public class Wallet extends BaseTaggableObject implements Serializable, BlockCha
             boolean needAtLeastReferenceFee = false;
             if (req.ensureMinRequiredFee && !req.emptyWallet) { // Min fee checking is handled later for emptyWallet.
                 for (TransactionOutput output : req.tx.getOutputs()) {
-                    if (output.getValue().compareTo(Coin.CENT) < 0) {
+                    if (output.getValue().compareTo(params.dustSoftLimit) < 0) {
                         needAtLeastReferenceFee = true;
                         if (output.getValue().compareTo(output.getMinNonDustValue()) < 0) { // Is transaction a "dust".
                             if (output.getScriptPubKey().isOpReturn()) { // Transactions that are OP_RETURN can't be dust regardless of their value.
