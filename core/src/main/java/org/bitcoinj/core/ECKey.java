@@ -173,7 +173,7 @@ public class ECKey implements EncryptableItem, Serializable {
         ECPrivateKeyParameters privParams = (ECPrivateKeyParameters) keypair.getPrivate();
         ECPublicKeyParameters pubParams = (ECPublicKeyParameters) keypair.getPublic();
         priv = privParams.getD();
-        pub = CURVE.getCurve().decodePoint(pubParams.getQ().getEncoded(true));
+        pub = CURVE.getCurve().decodePoint(pubParams.getQ().getEncoded());
         creationTimeSeconds = Utils.currentTimeSeconds();
     }
 
@@ -187,7 +187,7 @@ public class ECKey implements EncryptableItem, Serializable {
      * See the ECKey class docs for a discussion of point compression.
      */
     public static ECPoint compressPoint(ECPoint uncompressed) {
-        return CURVE.getCurve().decodePoint(uncompressed.getEncoded(true));
+        return CURVE.getCurve().decodePoint(uncompressed.getEncoded());
     }
 
     /**
@@ -195,7 +195,7 @@ public class ECKey implements EncryptableItem, Serializable {
      * See the ECKey class docs for a discussion of point compression.
      */
     public static ECPoint decompressPoint(ECPoint compressed) {
-        return CURVE.getCurve().decodePoint(compressed.getEncoded(false));
+        return CURVE.getCurve().decodePoint(compressed.getEncoded());
     }
 
     /**
@@ -409,9 +409,9 @@ public class ECKey implements EncryptableItem, Serializable {
      * Returns public key bytes from the given private key. To convert a byte array into a BigInteger, use <tt>
      * new BigInteger(1, bytes);</tt>
      */
-    public static byte[] publicKeyFromPrivate(BigInteger privKey, boolean compressed) {
+    public static byte[] publicKeyFromPrivate(BigInteger privKey) {
         ECPoint point = CURVE.getG().multiply(privKey);
-        return point.getEncoded(compressed);
+        return point.getEncoded();
     }
 
     /** Gets the hash160 form of the public key (as seen in addresses). */
@@ -610,7 +610,7 @@ public class ECKey implements EncryptableItem, Serializable {
         if (FAKE_SIGNATURES)
             return TransactionSignature.dummy();
         checkNotNull(privateKeyForSigning);
-        ECDSASigner signer = new ECDSASigner(new HMacDSAKCalculator(new SHA256Digest()));
+        ECDSASigner signer = new ECDSASigner();
         ECPrivateKeyParameters privKey = new ECPrivateKeyParameters(privateKeyForSigning, CURVE);
         signer.init(true, privKey);
         BigInteger[] components = signer.generateSignature(input.getBytes());
@@ -720,10 +720,10 @@ public class ECKey implements EncryptableItem, Serializable {
             BigInteger privkey = new BigInteger(1, privbits);
             byte[] pubbits = ((DERBitString)((ASN1TaggedObject)seq.getObjectAt(3)).getObject()).getBytes();
             // Now sanity check to ensure the pubkey bytes match the privkey.
-            byte[] compressed = publicKeyFromPrivate(privkey, true);
+            byte[] compressed = publicKeyFromPrivate(privkey);
             if (Arrays.equals(pubbits, compressed))
                 return new ECKey(privkey, compressed);
-            byte[] uncompressed = publicKeyFromPrivate(privkey, false);
+            byte[] uncompressed = publicKeyFromPrivate(privkey);
             if (Arrays.equals(pubbits, uncompressed))
                 return new ECKey(privkey, uncompressed);
             throw new IllegalArgumentException("Public key in ASN.1 structure does not match private key.");
@@ -896,7 +896,7 @@ public class ECKey implements EncryptableItem, Serializable {
         BigInteger srInv = rInv.multiply(sig.s).mod(n);
         BigInteger eInvrInv = rInv.multiply(eInv).mod(n);
         ECPoint q = ECAlgorithms.sumOfTwoMultiplies(CURVE.getG(), eInvrInv, R, srInv);
-        return ECKey.fromPublicOnly(q.getEncoded(compressed));
+        return ECKey.fromPublicOnly(q.getEncoded());
     }
 
     /** Decompress a compressed public key (x co-ord and low-bit of y-coord). */

@@ -268,7 +268,7 @@ public final class HDKeyDerivation {
         }
 
         assertNonInfinity(Ki, "Illegal derived key: derived public key equals infinity.");
-        return new RawKeyBytes(Ki.getEncoded(true), chainCode);
+        return new RawKeyBytes(Ki.getEncoded(), chainCode);
     }
 
     private static void assertNonZero(BigInteger integer, String errorMessage) {
